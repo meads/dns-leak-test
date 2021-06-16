@@ -5,7 +5,7 @@ set -e
 declare LOG="${1}"
 declare connection_uuid="${2}"
 
-# create a named pipe for blocking until the background script has completed and written
+# create a named pipe to read from when the background script has completed and written
 declare dnsleaktester_pipe="/tmp/${connection_uuid}/dnsleaktester_pipe"
 
 # create a named pipe for blocking until the background script has completed and written
@@ -13,19 +13,14 @@ declare sound_pipe="/tmp/${connection_uuid}/sound_pipe"
 
 # Use a temp file for storing the multiline results from the dnsleaktest
 declare DNSLEAKTEST_OUT=$(mktemp)
-
-# echo "LOG: $LOG" >> "${LOG}"
-# echo "connection_uuid: $connection_uuid" >> "${LOG}"
-# echo "dnsleaktester_pipe: $dnsleaktester_pipe" >> "${LOG}"
-# echo "sound_pipe: $sound_pipe" >> "${LOG}"
-# echo "$DNSLEAKTEST_OUT" >> "${LOG}" 
-
 function on-exit {
   rm -f "$dnsleaktester_pipe"
   rm -f "$sound_pipe"
   rm -r "$DNSLEAKTEST_OUT"
 }
 trap on-exit EXIT
+
+mkdir "/tmp/${connection_uuid}"
 
 [[ ! -p "$dnsleaktester_pipe" ]] && mkfifo "$dnsleaktester_pipe"
 [[ ! -p "$sound_pipe" ]] && mkfifo "$sound_pipe"
