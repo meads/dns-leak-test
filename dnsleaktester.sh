@@ -2,8 +2,11 @@
 
 set -e
 
-declare project_root=$(dirname $0)
-declare dnsleaktester_pipe=/tmp/dnsleaktester_pipe
+declare project_root="$(dirname $0)"
+declare LOG="${1}"
+declare connection_uuid="${2}"
+
+declare dnsleaktester_pipe="/tmp/${connection_uuid}/dnsleaktester_pipe"
 
 if [[ ! -p $dnsleaktester_pipe ]]; then
     echo "Reader not running" >> ${LOG}

@@ -2,9 +2,11 @@
 
 set -e
 
-declare LOG='/var/log/NetworkManager_dispatcher.d.log'
-declare sound_pipe='/tmp/sound_pipe'
-declare project_root=$(dirname $(dirname $0))
+declare LOG="${1}"
+declare connection_uuid="${2}"
+
+declare sound_pipe="/tmp/${connection_uuid}/sound_pipe"
+declare project_root="$(dirname $(dirname $0))"
 
 while true; do
   play "${project_root}/audio/dtmf-rbt-US.wav" repeat 20

@@ -3,12 +3,13 @@
 set -e
 
 declare LOG=$1
+declare connection_uuid=$2
 
 # create a named pipe for blocking until the background script has completed and written
-declare dnsleaktester_pipe=/tmp/dnsleaktester_pipe
+declare dnsleaktester_pipe=/tmp/${connection_uuid}/dnsleaktester_pipe
 
 # create a named pipe for blocking until the background script has completed and written
-declare sound_pipe=/tmp/sound_pipe
+declare sound_pipe=/tmp/${connection_uuid}/sound_pipe
 
 # Use a temp file for storing the multiline results from the dnsleaktest
 declare DNSLEAKTEST_OUT=$(mktemp)
@@ -25,10 +26,10 @@ trap on-exit EXIT
 
 
 # Execute the initializing sound script in the background, which plays a synth melody in a loop waiting to receive a quit message on it's named sound_pipe.  
-"${project_root}/audio/initializing-sound.sh" &
+"${project_root}/audio/initializing-sound.sh" ${LOG} ${connection_uuid} &
 
 # Execute the dnsleaktester script which invokes the dnsleaktest script (provided by bash.ws site author), writing it's result to the named dnsleaktester_pipe on completion.
-"${project_root}/dnsleaktester.sh" ${LOG} &
+"${project_root}/dnsleaktester.sh" ${LOG} ${connection_uuid} &
 
 
 # Put a message in the sound_pipe, so that sound will play until the dnsleaktest result is written to the other named dnsleaktester_pipe   

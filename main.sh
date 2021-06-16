@@ -15,10 +15,10 @@ echo "$(date +"%F %T") Called with ($*) and connection uuid is: ${CONNECTION_UUI
 #export DISPLAY=:0.0
 #export $(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$(pgrep session)/environ)
 
-for FILE in ${CWD}/${CONNECTION_UUID}/${STATE}/*
+for FILE in ${CWD}/dns-leak-test-scripts-${CONNECTION_UUID}/${STATE}/*
 do
   #DEBUG
   echo "$(date +"%F %T") Running ${FILE}" >> ${LOG}
-  "${FILE}" ${LOG}
+  "${FILE}" ${LOG} ${CONNECTION_UUID}
 done
 
