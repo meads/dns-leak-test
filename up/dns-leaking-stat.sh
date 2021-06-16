@@ -2,53 +2,60 @@
   
 set -e
 
-declare LOG=$1
-declare connection_uuid=$2
+declare LOG="${1}"
+declare connection_uuid="${2}"
 
 # create a named pipe for blocking until the background script has completed and written
-declare dnsleaktester_pipe=/tmp/${connection_uuid}/dnsleaktester_pipe
+declare dnsleaktester_pipe="/tmp/${connection_uuid}/dnsleaktester_pipe"
 
 # create a named pipe for blocking until the background script has completed and written
-declare sound_pipe=/tmp/${connection_uuid}/sound_pipe
+declare sound_pipe="/tmp/${connection_uuid}/sound_pipe"
 
 # Use a temp file for storing the multiline results from the dnsleaktest
 declare DNSLEAKTEST_OUT=$(mktemp)
 
+# echo "LOG: $LOG" >> "${LOG}"
+# echo "connection_uuid: $connection_uuid" >> "${LOG}"
+# echo "dnsleaktester_pipe: $dnsleaktester_pipe" >> "${LOG}"
+# echo "sound_pipe: $sound_pipe" >> "${LOG}"
+# echo "$DNSLEAKTEST_OUT" >> "${LOG}" 
+
 function on-exit {
-  rm -f $dnsleaktester_pipe
-  rm -f $sound_pipe
-  rm -r $DNSLEAKTEST_OUT
+  rm -f "$dnsleaktester_pipe"
+  rm -f "$sound_pipe"
+  rm -r "$DNSLEAKTEST_OUT"
 }
 trap on-exit EXIT
 
-[[ ! -p $dnsleaktester_pipe ]] && mkfifo $dnsleaktester_pipe
-[[ ! -p $sound_pipe ]] && mkfifo $sound_pipe
+[[ ! -p "$dnsleaktester_pipe" ]] && mkfifo "$dnsleaktester_pipe"
+[[ ! -p "$sound_pipe" ]] && mkfifo "$sound_pipe"
 
+declare project_root="$(dirname $(dirname $0))"
 
 # Execute the initializing sound script in the background, which plays a synth melody in a loop waiting to receive a quit message on it's named sound_pipe.  
-"${project_root}/audio/initializing-sound.sh" ${LOG} ${connection_uuid} &
+"${project_root}/dial-quitter.sh" "${LOG}" "${sound_pipe}" &
 
 # Execute the dnsleaktester script which invokes the dnsleaktest script (provided by bash.ws site author), writing it's result to the named dnsleaktester_pipe on completion.
-"${project_root}/dnsleaktester.sh" ${LOG} ${connection_uuid} &
+"${project_root}/dnsleaktester.sh" "${LOG}" "${dnsleaktester_pipe}" &
 
 
 # Put a message in the sound_pipe, so that sound will play until the dnsleaktest result is written to the other named dnsleaktester_pipe   
-echo >$sound_pipe
+echo >"$sound_pipe"
 
 
-echo "Reading from the pipe in up script" >> ${LOG}
+echo "Reading from the pipe in up script" >> "${LOG}"
   
 # Block until the dnsleaktest results are written to the pipe.
 if cat $dnsleaktester_pipe >$DNSLEAKTEST_OUT; then
-  echo "Data received on dnsleaktester_pipe in up script." >> ${LOG}
+  echo "Data received on dnsleaktester_pipe in up script." >> "${LOG}"
 
   # Put a quit message in the sound_pipe so that it will terminate.
-  echo "quit" > $sound_pipe
+  echo "quit" > "$sound_pipe"
 fi
 
 
-echo "Playing appropriate synth for DNSLEAKTEST_OUT status" >> ${LOG}
-cat "$DNSLEAKTEST_OUT" >> ${LOG}
+echo "Playing appropriate synth for DNSLEAKTEST_OUT status" >> "${LOG}"
+cat "$DNSLEAKTEST_OUT" >> "${LOG}"
 
 if grep -q 'DNS is not leaking' <<< "$(cat $DNSLEAKTEST_OUT)" ; then
   # play bell if dns is not leaking
@@ -61,5 +68,5 @@ elif grep -q 'DNS may be leaking' <<< "$(cat $DNSLEAKTEST_OUT)" ; then
 else
   # play dialtone if no internet
   play -n synth 0.1 sine 350 sine 440 channels 1 repeat 20 
-  
+
 fi

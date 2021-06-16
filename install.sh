@@ -41,7 +41,7 @@ while [ $has_chosen_uuid -eq 1 ] ; do
     if [ -e "${device_uuid_directory}" ] ; then
         sudo rm -r "${device_uuid_directory}"/*
     fi
-    sudo mkdir -p "${device_uuid_directory}"/{up,down}
+    sudo mkdir -p "${device_uuid_directory}"/{down,up}
 
     # create the main executable from "main.sh" template, that defers to the underlying script as events are received. e.g. "up", "down" etc.
     declare main="dns-leak-test-${uuid_to_dispatch_events_for}"
@@ -60,6 +60,14 @@ while [ $has_chosen_uuid -eq 1 ] ; do
     # Symlink the down script
     sudo ln -s "$(pwd)/down/disconnect-sound.sh" "${device_uuid_directory}/down/disconnect-sound"
 
+    # Symlink the dialer script 
+    sudo ln -s "$(pwd)/dial-quitter.sh" "${device_uuid_directory}/dial-quitter.sh"
+
+    # Symlink the bash.ws script provided via site author.
+    sudo ln -s "$(pwd)/bash.ws.sh" "${device_uuid_directory}/bash.ws.sh"
+
+    # Symlink the wrapper script dnsleaktester that responds on the named pipe.
+    sudo ln -s "$(pwd)/dnsleaktester.sh" "${device_uuid_directory}/dnsleaktester.sh"
   else
     read -sn1 selection
 

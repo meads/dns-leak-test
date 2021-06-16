@@ -9,7 +9,7 @@ LOG='/var/log/NetworkManager/dns-leak-test.d.log'
 [[ -z ${CONNECTION_UUID} ]] && exit 0
 
 # DEBUG
-echo "$(date +"%F %T") Called with ($*) and connection uuid is: ${CONNECTION_UUID}" >> ${LOG}
+echo "$(date +"%F %T") Called with ($*) and connection uuid is: ${CONNECTION_UUID}" >> "${LOG}"
 
 # Needed only if you need to display notification popups
 #export DISPLAY=:0.0
@@ -18,7 +18,7 @@ echo "$(date +"%F %T") Called with ($*) and connection uuid is: ${CONNECTION_UUI
 for FILE in ${CWD}/dns-leak-test-scripts-${CONNECTION_UUID}/${STATE}/*
 do
   #DEBUG
-  echo "$(date +"%F %T") Running ${FILE}" >> ${LOG}
-  "${FILE}" ${LOG} ${CONNECTION_UUID}
+  echo "$(date +"%F %T") Running ${FILE}" >> "${LOG}"
+  . "${FILE}" ${LOG} ${CONNECTION_UUID}
 done
 
