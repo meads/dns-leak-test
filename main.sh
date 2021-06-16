@@ -19,6 +19,7 @@ for FILE in ${CWD}/dns-leak-test-scripts-${CONNECTION_UUID}/${STATE}/*
 do
   #DEBUG
   echo "$(date +"%F %T") Running ${FILE}" >> "${LOG}"
-  . "${FILE}" ${LOG} ${CONNECTION_UUID}
+
+  ${FILE} "${LOG}" "${CONNECTION_UUID}"
 done
 

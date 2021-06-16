@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
   
-set -e
+set -ex
 
 declare LOG="${1}"
 declare connection_uuid="${2}"
@@ -13,19 +13,22 @@ declare sound_pipe="/tmp/${connection_uuid}/sound_pipe"
 
 # Use a temp file for storing the multiline results from the dnsleaktest
 declare DNSLEAKTEST_OUT=$(mktemp)
+
+declare project_root="$(dirname $(dirname $0))"
+
+
 function on-exit {
   rm -f "$dnsleaktester_pipe"
   rm -f "$sound_pipe"
-  rm -r "$DNSLEAKTEST_OUT"
+  rm -f "$DNSLEAKTEST_OUT"
 }
+
 trap on-exit EXIT
 
-mkdir "/tmp/${connection_uuid}"
+mkdir -p "/tmp/${connection_uuid}" 
 
 [[ ! -p "$dnsleaktester_pipe" ]] && mkfifo "$dnsleaktester_pipe"
 [[ ! -p "$sound_pipe" ]] && mkfifo "$sound_pipe"
-
-declare project_root="$(dirname $(dirname $0))"
 
 # Execute the initializing sound script in the background, which plays a synth melody in a loop waiting to receive a quit message on it's named sound_pipe.  
 "${project_root}/dial-quitter.sh" "${LOG}" "${sound_pipe}" &
