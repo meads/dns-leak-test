@@ -9,8 +9,8 @@ declare sound_pipe="/tmp/${connection_uuid}/sound_pipe"
 declare project_root="$(dirname $(dirname $0))"
 
 while true; do
-  play "${project_root}/audio/dtmf-rbt-US.wav" repeat 20
-  
+  play -n synth 0.1 sine 440 sine 480 channels 1 repeat 20
+
   echo "Reading from pipe in initialize_sound" >> ${LOG} 
   if read line <$sound_pipe; then
   
@@ -19,4 +19,6 @@ while true; do
       exit;
     fi 
   fi
+  
+  sleep 4
 done

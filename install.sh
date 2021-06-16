@@ -44,14 +44,15 @@ while [ $has_chosen_uuid -eq 1 ] ; do
     sudo mkdir -p "${device_uuid_directory}"/{up,down}
 
     # create the main executable from "main.sh" template, that defers to the underlying script as events are received. e.g. "up", "down" etc.
-    cat main.sh > dns-leak-test-${uuid_to_dispatch_events_for}
+    declare main="dns-leak-test-${uuid_to_dispatch_events_for}"
+    cat main.sh > "$main"
 
     # set required permissions and user/group ownership for dispatcher to execute it
-    sudo chown root:root dns-leak-test
-    sudo chmod 755 dns-leak-test
+    sudo chown root:root "$main"
+    sudo chmod 755 "$main"
 
     # Move the executable created earlier into the root directory of the dispatcher.d.
-    sudo mv dns-leak-test /etc/NetworkManager/dispatcher.d/
+    sudo mv "$main" /etc/NetworkManager/dispatcher.d/
 
     # Symlink the up script
     sudo ln -s "$(pwd)/up/dns-leaking-stat.sh" "${device_uuid_directory}/up/dns-leaking-stat"

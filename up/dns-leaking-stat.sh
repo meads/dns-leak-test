@@ -60,6 +60,6 @@ elif grep -q 'DNS may be leaking' <<< "$(cat $DNSLEAKTEST_OUT)" ; then
 
 else
   # play dialtone if no internet
-  play "${project_root}/audio/dtmf-dialtone.wav" repeat 20 
-
+  play -n synth 0.1 sine 350 sine 440 channels 1 repeat 20 
+  
 fi

@@ -1,5 +1,3 @@
 #!/usr/bin/env bash
 
-declare project_root="$(dirname $(dirname $0))"
-
-play "${project_root}/audio/dtmf-dialtone.wav" repeat 20
+play -n synth 0.1 sine 350 sine 440 channels 1 repeat 20
