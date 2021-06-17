@@ -64,6 +64,13 @@ SELECT   NAME              UUID                                  TYPE  DEVICE
 
 ```
 
+## Diagnose
+
+```bash
+# This will open the logs file to view during or after the connection/disconnection process to see the details.
+make logs
+```
+
 ## Remove
 
 ```bash
