@@ -73,3 +73,7 @@ make clean
 
 *Note: The intention is to allow for multiple configurations, hence the usage of the device UUID used throughout each configuration generated after running `make` and selecting a number from the menu. However usage of multiple configurations is experimental at the moment.*
 
+
+## Thanks!
+
+Thanks to github user macvk for contributing what is known here as lib/bash.ws.sh script which can also be [found here](https://bash.ws/dnsleak).
