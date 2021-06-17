@@ -64,7 +64,7 @@ while [ $has_chosen_uuid -eq 1 ] ; do
     sudo ln -s "$(pwd)/dial-quitter.sh" "${device_uuid_directory}/dial-quitter.sh"
 
     # Symlink the bash.ws script provided via site author.
-    sudo ln -s "$(pwd)/bash.ws.sh" "${device_uuid_directory}/bash.ws.sh"
+    sudo ln -s "$(pwd)/lib/bash.ws.sh" "${device_uuid_directory}/bash.ws.sh"
 
     # Symlink the wrapper script dnsleaktester that responds on the named pipe.
     sudo ln -s "$(pwd)/dnsleaktester.sh" "${device_uuid_directory}/dnsleaktester.sh"
